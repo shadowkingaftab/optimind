@@ -1,1 +1,44 @@
-﻿
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "EyeDx: Install All Dependencies",
+      "type": "shell",
+      "command": "cd backend && pip install -e '.[dev]' && cd ../model-service && pip install -e '.[dev]' && cd ../frontend && npm ci",
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "EyeDx: Run Backend Tests",
+      "type": "shell",
+      "command": "pytest",
+      "options": {
+        "cwd": "${workspaceFolder}/backend"
+      },
+      "group": "test",
+      "problemMatcher": ["$pytest"],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "EyeDx: Run Model Service Tests",
+      "type": "shell",
+      "command": "pytest",
+      "options": {
+        "cwd": "${workspaceFolder}/model-service"
+      },
+      "group": "test",
+      "problemMatcher": ["$pytest"],
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    }
+  ]
+}
