@@ -1,1 +1,52 @@
-﻿
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "EyeDx: FastAPI Backend",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "app.main:app",
+        "--reload",
+        "--port",
+        "8000"
+      ],
+      "cwd": "${workspaceFolder}/backend",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/backend"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "EyeDx: PyTorch Model Service",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/model-service/main.py",
+      "cwd": "${workspaceFolder}/model-service",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/model-service",
+        "CUDA_VISIBLE_DEVICES": "0"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "EyeDx: React Frontend (Vite)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}/frontend"
+    },
+    {
+      "name": "EyeDx: Full Stack Debug",
+      "configurations": [
+        "EyeDx: FastAPI Backend",
+        "EyeDx: PyTorch Model Service",
+        "EyeDx: React Frontend (Vite)"
+      ],
+      "stopAll": true
+    }
+  ]
+}
