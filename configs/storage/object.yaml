@@ -1,0 +1,17 @@
+# Storage object (S3) config template
+# All sensitive values INPUT_REQUIRED
+
+storage:
+  type: s3
+  bucket: eyedx-uploads  # INPUT_REQUIRED
+  region: us-east-1  # INPUT_REQUIRED
+  endpoint_url: null  # optional for custom S3
+  access_key_id: ""  # INPUT_REQUIRED (secret)
+  secret_access_key: ""  # INPUT_REQUIRED (secret)
+  use_ssl: true
+  retention_days: 30  # INPUT_REQUIRED
+  allowed_extensions:
+    - .jpg
+    - .jpeg
+    - .png
+  max_size_mb: 5

@@ -1,1 +1,16 @@
-﻿
+﻿{
+  "name": "eyedx",
+  "version": "0.1.0",
+  "description": "EyeDx - AI-assisted ocular image screening platform (screening only)",
+  "private": true,
+  "workspaces": [],
+  "scripts": {
+    "lint": "echo 'Lint not executed in this phase'",
+    "typecheck": "echo 'Typecheck not executed in this phase'",
+    "test": "echo 'Tests not executed in this phase'"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "SEE LICENSE IN LICENSE"
+}

@@ -1,1 +1,33 @@
-﻿
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eyedx.ai/schemas/error-response.schema.json",
+  "title": "ErrorResponse",
+  "description": "Structured error response as per EyeDx API contract",
+  "type": "object",
+  "required": [
+    "error",
+    "message",
+    "request_id"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "error": {
+      "type": "string",
+      "description": "Machine-readable error code (e.g., validation_failed, quality_insufficient, unauthorized, not_found)"
+    },
+    "message": {
+      "type": "string",
+      "description": "Human-readable error message (screening-safe, no clinical diagnosis)"
+    },
+    "request_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Traceable request identifier"
+    },
+    "details": {
+      "type": "object",
+      "description": "Additional non-sensitive error details",
+      "additionalProperties": true
+    }
+  }
+}

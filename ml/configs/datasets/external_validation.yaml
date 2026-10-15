@@ -1,1 +1,61 @@
-﻿
+﻿# External validation dataset definition.
+#
+# External validation uses data from a different site or acquisition source than
+# training. It must never be folded into training or used to tune thresholds.
+# Real data and labels must be supplied under licence; nothing is downloaded.
+
+schema_version: "1.0.0"
+name: external_validation
+description: >-
+  Held-out external dataset(s) for screening-model validation across sites and
+  devices. Screening-only; not a diagnostic dataset.
+
+status: INPUT_REQUIRED   # set to "approved" once the source registry is complete
+
+paths:
+  image_root: datasets/external
+  manifest: datasets/splits/external-test.csv
+  metadata_dir: datasets/metadata
+  label_map: datasets/annotations/label-map.json
+
+source:
+  registry: datasets/external
+  require_license: true
+  require_consent: true
+  pseudonymization_salt: INPUT_REQUIRED
+
+labels:
+  label_map: datasets/annotations/label-map.json
+  # The external label map must map into the same canonical codes as training.
+  require_approved_label_map: true
+  harmonisation: INPUT_REQUIRED      # describe how external codes map to canonical codes
+
+splitting:
+  # External data is used whole as a test set; it is never split for training.
+  strategy: external
+  name: external-test
+
+preprocessing:
+  # Preprocessing MUST match the training-time evaluation transform exactly.
+  match_training: true
+  steps:
+    - name: crop_retina
+      params:
+        threshold: 7
+        margin_ratio: 0.0
+        target_size: [512, 512]
+    - name: illumination
+      params:
+        radius: 25
+        strength: 0.5
+    - name: normalize
+      params:
+        mean: INPUT_REQUIRED
+        std: INPUT_REQUIRED
+
+augmentation:
+  # Never augment external validation data.
+  enabled: false
+
+reporting:
+  subgroups: INPUT_REQUIRED          # site, device, eye_side, age_bucket, ...

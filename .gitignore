@@ -1,1 +1,76 @@
-node_modules/\n__pycache__/\n.env\n*.pyc\n
+# Docker
+.dockerignore
+Dockerfile
+docker-compose*.yml
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Data (never commit real data)
+datasets/raw/*
+datasets/processed/*
+!datasets/raw/.gitkeep
+!datasets/processed/.gitkeep
+
+# Model artifacts (never commit weights/binaries)
+*.pth
+*.pt
+*.onnx
+*.h5
+*.pkl
+*.joblib
+*.bin
+!**/.gitkeep
+
+# Storage
+storage/uploads/*
+storage/tmp/*
+!storage/uploads/.gitkeep
+!storage/tmp/.gitkeep
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,1 +1,35 @@
-﻿
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eyedx.ai/schemas/prediction-request.schema.json",
+  "title": "PredictionRequest",
+  "description": "Image prediction request - screening only",
+  "type": "object",
+  "required": [
+    "image",
+    "consent_id"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "image": {
+      "type": "string",
+      "description": "Base64-encoded eye image (jpeg/png). No patient-identifying data embedded.",
+      "contentEncoding": "base64",
+      "contentMediaType": "image/jpeg"
+    },
+    "consent_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Consent ID validating authorized use"
+    },
+    "image_format": {
+      "type": "string",
+      "enum": ["jpeg", "png"],
+      "description": "Optional explicit image format"
+    },
+    "request_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Client-generated request ID for idempotency (optional)"
+    }
+  }
+}

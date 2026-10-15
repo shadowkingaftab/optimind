@@ -1,1 +1,30 @@
-﻿
+﻿{
+  "request_id": "00000000-0000-0000-0000-000000000000",
+  "status": "uncertain",
+  "model_id": "eyedx-screening",
+  "model_version": "1.0.0",
+  "created_at": "2026-10-14T00:00:00Z",
+  "predictions": [
+    {
+      "label": "reference_class",
+      "score": 0.55
+    }
+  ],
+  "uncertainty": {
+    "entropy": 0.8,
+    "max_prob": 0.55,
+    "method": "max_prob"
+  },
+  "explanation": {
+    "available": false,
+    "method": "none"
+  },
+  "quality": {
+    "passed": true,
+    "issues": []
+  },
+  "limitations": "This is a screening tool only and does not provide a medical diagnosis. Result uncertainty is high; consider referral per local guidelines.",
+  "metadata": {
+    "api_version": "v1"
+  }
+}

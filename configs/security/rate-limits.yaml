@@ -1,1 +1,10 @@
-﻿
+﻿# Security - rate limits
+# INPUT_REQUIRED per deployment
+
+rate_limits:
+  global:
+    requests_per_minute: 60
+    requests_per_hour: 1000
+  predictions:
+    requests_per_minute: 10  # stricter for inference
+    burst: 5

@@ -1,1 +1,30 @@
-﻿
+﻿# Strong augmentation policy (training split only).
+#
+# More aggressive transforms, intended for large datasets or as an ablation.
+# Colour/illumination shifts can remove clinically meaningful cues; validate
+# against model preservation requirements before use. Training split only.
+
+schema_version: "1.0.0"
+name: strong
+seed: 42
+
+geometric:
+  hflip_p: 0.5
+  vflip_p: 0.0
+  rotate90_p: 0.0
+  max_angle: 25.0
+
+photometric:
+  brightness: 0.2
+  contrast: 0.2
+  gamma: [0.7, 1.4]
+  jitter: 0.05
+
+noise:
+  gaussian_sigma: 0.03
+  salt_pepper_amount: 0.002
+  blur_radius: [0.3, 1.0]
+
+batch_mixer:
+  name: mixup        # none | mixup | cutmix
+  alpha: 0.2

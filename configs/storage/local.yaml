@@ -1,1 +1,13 @@
-﻿
+﻿# Storage local config (development)
+# Safe defaults
+
+storage:
+  type: local
+  base_path: ./storage/uploads
+  allowed_extensions:
+    - .jpg
+    - .jpeg
+    - .png
+  max_size_mb: 5
+  use_signed_urls: true
+  retention_days: 30  # INPUT_REQUIRED per policy

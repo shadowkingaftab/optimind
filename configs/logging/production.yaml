@@ -1,1 +1,20 @@
-﻿
+﻿# Logging configuration
+# Production - stricter, privacy-safe
+
+version: 1
+formatters:
+  json:
+    format: '{"timestamp":"%(asctime)s","level":"%(levelname)s","name":"%(name)s","msg":"%(message)s","request_id":"%(request_id)s"}'
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    formatter: json
+    level: INFO
+
+root:
+  level: WARNING
+  handlers: [console]
+
+# Note: Never log image data, patient data, tokens, or secrets
+# Correlation via request_id only

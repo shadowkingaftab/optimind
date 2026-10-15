@@ -1,1 +1,71 @@
-﻿
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eyedx.ai/schemas/model-metadata.schema.json",
+  "title": "ModelMetadata",
+  "description": "Model metadata including version, labels, preprocessing, calibration, and capabilities",
+  "type": "object",
+  "required": [
+    "model_id",
+    "model_version",
+    "created_at",
+    "labels",
+    "preprocessing",
+    "capabilities"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "model_id": {
+      "type": "string",
+      "description": "Model identifier"
+    },
+    "model_version": {
+      "type": "string",
+      "description": "Semantic version or registry version (e.g., 1.0.0)"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp (UTC)"
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Supported output labels (as configured; no clinical claims assumed)"
+    },
+    "preprocessing": {
+      "type": "object",
+      "description": "Preprocessing pipeline metadata",
+      "additionalProperties": true
+    },
+    "calibration": {
+      "type": "object",
+      "description": "Calibration metadata (if available; may be absent)",
+      "additionalProperties": true
+    },
+    "capabilities": {
+      "type": "object",
+      "required": [
+        "supports_uncertainty",
+        "supports_explanation",
+        "supports_abstention"
+      ],
+      "properties": {
+        "supports_uncertainty": {
+          "type": "boolean"
+        },
+        "supports_explanation": {
+          "type": "boolean"
+        },
+        "supports_abstention": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "description": {
+      "type": "string"
+    }
+  }
+}

@@ -1,1 +1,19 @@
-﻿
+﻿# Security - retention policy
+# INPUT_REQUIRED: legal/compliance approval
+
+retention_policy:
+  uploads:
+    days: 30  # INPUT_REQUIRED (jurisdiction-dependent)
+    auto_delete: true
+  predictions:
+    days: 365  # INPUT_REQUIRED (audit retention)
+    auto_delete: false
+  audit_logs:
+    days: 730  # INPUT_REQUIRED (compliance)
+    auto_delete: false
+  temporary_files:
+    hours: 24
+    auto_delete: true
+  quarantine:
+    days: 7
+    auto_delete: true

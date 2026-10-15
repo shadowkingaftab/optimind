@@ -1,0 +1,31 @@
+# Application configuration template
+# Status: INPUT_REQUIRED for deployment-specific values
+# No secrets, no clinical data
+
+API_VERSION=v1
+API_PREFIX=/api/v1
+APP_NAME=eyedx
+APP_ENV=development
+DEBUG=false
+TZ=UTC
+
+# CORS (comma-separated origins or * only in non-production)
+CORS_ALLOW_ORIGINS=*
+
+# Feature flags (non-sensitive)
+FEATURE_EXPLAINABILITY=false
+FEATURE_UNCERTAINTY=true
+FEATURE_ABSTENTION=true
+
+# Request limits
+MAX_UPLOAD_MB=5
+REQUEST_TIMEOUT_SECONDS=30
+RATE_LIMIT_PER_MINUTE=60
+
+# Consent
+CONSENT_REQUIRED=true
+
+# Notes:
+# - Production CORS must be restricted (INPUT_REQUIRED: exact origins)
+# - DEBUG must be false in production (INPUT_REQUIRED: environment)
+# - Feature flags require product approval if changing (INPUT_REQUIRED: product owner)
