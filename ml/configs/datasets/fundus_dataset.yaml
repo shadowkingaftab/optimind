@@ -1,1 +1,104 @@
-﻿
+﻿# Fundus dataset definition.
+#
+# Declares where licensed data lives and how it is interpreted. Paths point at
+# placeholders under datasets/; real images and tables must be supplied under
+# licence out of band. Fields marked INPUT_REQUIRED must be filled before the
+# pipeline can run; the loader refuses INPUT_REQUIRED where a concrete value is
+# needed (for example the pseudonymization salt).
+
+schema_version: "1.0.0"
+name: fundus_dataset
+description: >-
+  Internal screening fundus dataset contract. Screening-only; not a diagnostic
+  dataset. No patient images are committed to this repository.
+
+status: INPUT_REQUIRED   # set to "approved" once the source registry is complete
+
+paths:
+  image_root: datasets/raw            # actual image bytes live here (git-ignored)
+  manifest: datasets/metadata/images.csv
+  metadata_dir: datasets/metadata
+  annotations_dir: datasets/annotations
+  label_map: datasets/annotations/label-map.json
+  output_dir: datasets/interim
+  splits_dir: datasets/splits
+
+source:
+  registry: datasets/external        # see datasets/external/README.md
+  require_license: true              # refuse to ingest without a recorded licence
+  require_consent: true
+  pseudonymization_salt: INPUT_REQUIRED   # NEVER commit a real salt; inject via env
+
+manifest:
+  # Canonical columns produced by eyedx_ml.data.ingestion.dataset_importer
+  columns:
+    - record_id
+    - image_path
+    - patient_key
+    - site_id
+    - device_id
+    - eye_side
+    - image_format
+    - checksum_sha256
+  optional_columns:
+    - labels
+    - split
+
+labels:
+  # Labels are not defined in this repository. Populate and approve the label
+  # map before requesting labels here.
+  label_map: datasets/annotations/label-map.json
+  primary_label: INPUT_REQUIRED      # e.g. the screening label used for stratification
+  require_approved_label_map: true
+
+validation:
+  require_patient_key: true
+  require_labels: true
+  allowed_eye_sides: [left, right, unknown]
+  allowed_formats: [jpeg, png]
+
+quality:
+  # Structural quality gates for image validity. These are not clinical measures.
+  min_width: 256
+  min_height: 256
+  min_brightness: 0.2
+  max_blur_score: 0.3
+  require_rgb: false
+
+splitting:
+  strategy: patient        # patient | site
+  ratios:
+    train: 0.7
+    validation: 0.15
+    test: 0.15
+  seed: 42
+  stratify_on: INPUT_REQUIRED        # primary label code once defined
+  holdout_sites: []                  # required when strategy == site
+
+preprocessing:
+  # Steps are executed in order by eyedx_ml.preprocessing.PreprocessingPipeline.
+  steps:
+    - name: crop_retina
+      params:
+        threshold: 7
+        margin_ratio: 0.0
+        target_size: [512, 512]
+    - name: illumination
+      params:
+        radius: 25
+        strength: 0.5
+    - name: normalize
+      params:
+        # mean/std are INPUT_REQUIRED: compute from the training split and record
+        # them here; omit for per-image (instance) normalisation.
+        mean: INPUT_REQUIRED
+        std: INPUT_REQUIRED
+
+augmentation:
+  # Applied to the training split only.
+  config: ml/configs/augmentation/light.yaml
+  mixup: none                        # none | mixup | cutmix
+
+statistics:
+  sample_limit: INPUT_REQUIRED       # cap image probing on very large datasets
+  min_cell_size: 5                   # small-cell suppression for demographics

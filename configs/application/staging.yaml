@@ -1,1 +1,23 @@
-﻿
+﻿# Staging application config
+# INPUT_REQUIRED: staging-specific values
+
+api:
+  version: v1
+  prefix: /api/v1
+  host: 0.0.0.0
+  port: 8000
+
+cors:
+  allow_origins: []  # INPUT_REQUIRED
+
+features:
+  explainability: false
+  uncertainty: true
+  abstention: true
+
+limits:
+  max_upload_mb: 5
+  rate_limit_per_minute: 60
+
+security:
+  consent_required: true

@@ -1,1 +1,26 @@
-﻿
+﻿# Logging configuration
+# Safe defaults - no PII, no clinical data
+
+version: 1
+formatters:
+  standard:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    formatter: standard
+    level: INFO
+
+root:
+  level: INFO
+  handlers: [console]
+
+loggers:
+  eyedx:
+    level: INFO
+    propagate: false
+    handlers: [console]
+
+# Note: Do not log request bodies containing images or PII
+# Log request_id, status codes, durations only

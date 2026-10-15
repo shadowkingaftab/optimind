@@ -1,1 +1,9 @@
-﻿
+﻿# Security - allowed origins
+# INPUT_REQUIRED: actual origins
+
+allowed_origins:
+  development:
+    - http://localhost:3000
+    - http://localhost:5173
+  staging: []  # INPUT_REQUIRED
+  production: []  # INPUT_REQUIRED

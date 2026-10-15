@@ -1,1 +1,25 @@
-# Python dependencies placeholder\n
+# Python dependencies
+# Status: INPUT_REQUIRED per subproject
+# Core dependencies will be specified in Phase 2 (backend), Phase 5 (ml), Phase 6 (model_service)
+
+# Development dependencies
+black>=23.0
+ruff>=0.1.0
+mypy>=1.6.0
+pytest>=7.4.0  # For Phase 13 only (not executed now)
+pytest-asyncio>=0.21.0  # For Phase 13 only
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+sqlalchemy>=2.0.23
+alembic>=1.12.1
+asyncpg>=0.29.0
+httpx>=0.25.2
+python-multipart>=0.0.6
+pyjwt>=2.8.0
+passlib[bcrypt]>=1.7.4
+python-jose[cryptography]>=3.3.0
+
+# Note: This is a consolidated placeholder; actual minimal deps per service in their own reqs.
+# Do not install/run now per phase rules.

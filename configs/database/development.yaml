@@ -1,1 +1,16 @@
-﻿
+﻿# Database development config
+# INPUT_REQUIRED: real credentials in secure env
+
+database:
+  driver: postgresql+asyncpg
+  host: localhost
+  port: 5432
+  name: eyedx
+  user: eyedx  # INPUT_REQUIRED
+  pool_size: 20
+  max_overflow: 10
+  echo: false
+
+migrations:
+  alembic_ini: alembic.ini  # will be in backend (Phase 2)
+  script_location: alembic

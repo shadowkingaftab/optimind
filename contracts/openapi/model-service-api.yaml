@@ -1,1 +1,109 @@
-﻿
+﻿openapi: 3.1.0
+info:
+  title: EyeDx Model Service API
+  description: |
+    Versioned model inference service. 
+    Screening only - never diagnostic.
+  version: 1.0.0
+  license:
+    name: EyeDx License
+servers:
+  - url: /
+tags:
+  - name: Inference
+  - name: Model
+  - name: Health
+
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check
+      responses:
+        '200':
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, model_loaded, model_version]
+                additionalProperties: false
+                properties:
+                  status:
+                    type: string
+                    enum: [ok, degraded]
+                  model_loaded:
+                    type: boolean
+                  model_version:
+                    type: string
+
+  /model/info:
+    get:
+      tags: [Model]
+      summary: Get model metadata
+      responses:
+        '200':
+          description: Model metadata
+          content:
+            application/json:
+              schema:
+                $ref: '../json-schemas/model-metadata.schema.json'
+        '503':
+          description: Model not ready/unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '../json-schemas/error-response.schema.json'
+
+  /predict:
+    post:
+      tags: [Inference]
+      summary: Run inference
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../json-schemas/prediction-request.schema.json'
+      responses:
+        '200':
+          description: Inference result
+          content:
+            application/json:
+              schema:
+                $ref: '../json-schemas/prediction-response.schema.json'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '../json-schemas/error-response.schema.json'
+        '422':
+          description: Quality/validation rejection
+          content:
+            application/json:
+              schema:
+                $ref: '../json-schemas/error-response.schema.json'
+        '500':
+          description: Inference error
+          content:
+            application/json:
+              schema:
+                $ref: '../json-schemas/error-response.schema.json'
+        '503':
+          description: Service/model unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '../json-schemas/error-response.schema.json'
+
+components:
+  schemas:
+    ErrorResponse:
+      $ref: '../json-schemas/error-response.schema.json'
+    PredictionRequest:
+      $ref: '../json-schemas/prediction-request.schema.json'
+    PredictionResponse:
+      $ref: '../json-schemas/prediction-response.schema.json'
+    ModelMetadata:
+      $ref: '../json-schemas/model-metadata.schema.json'

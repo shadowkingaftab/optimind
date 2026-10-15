@@ -1,0 +1,33 @@
+# Training config template
+# Status: INPUT_REQUIRED - requires approved data, labels, cohorts
+# No patient data, no weights committed
+
+training:
+  seed: 42  # reproducibility
+  epochs: 100  # INPUT_REQUIRED per protocol
+  batch_size: 32  # INPUT_REQUIRED
+  learning_rate: 0.001  # INPUT_REQUIRED
+  validation_split: 0.2
+  test_split: 0.1
+
+data:
+  train_manifest: null  # INPUT_REQUIRED: path to approved manifest
+  val_manifest: null  # INPUT_REQUIRED
+  test_manifest: null  # INPUT_REQUIRED
+  data_dir: null  # INPUT_REQUIRED (no real data in repo)
+
+splits:
+  patient_level_split: true  # required to prevent leakage
+  group_by: patient_id  # INPUT_REQUIRED schema-dependent
+
+evaluation:
+  metrics: ["accuracy", "auc", "precision", "recall", "f1"]  # non-diagnostic framing
+  save_predictions: false  # never save identifiable predictions
+  subgroup_evaluation: false  # INPUT_REQUIRED if enabled
+
+export:
+  format: onnx  # or torchscript
+  export_path: null  # INPUT_REQUIRED
+  include_metadata: true
+  include_preprocessing: true
+  include_calibration: false  # INPUT_REQUIRED

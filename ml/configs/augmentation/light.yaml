@@ -1,1 +1,28 @@
-﻿
+﻿# Light augmentation policy (training split only).
+#
+# Conservative transforms suitable as a first default. Every operation is
+# seeded; see eyedx_ml.augmentation.build_augmentation for the schema.
+# Augmentation must NEVER be applied to validation, test or external-test data.
+
+schema_version: "1.0.0"
+name: light
+seed: 42
+
+geometric:
+  hflip_p: 0.5
+  vflip_p: 0.0        # vertical flips are not validated for fundus images
+  rotate90_p: 0.0
+  max_angle: 10.0
+
+photometric:
+  brightness: 0.08
+  contrast: 0.08
+  gamma: [0.9, 1.1]
+  jitter: 0.02
+
+noise:
+  gaussian_sigma: 0.01
+
+batch_mixer:
+  name: none          # none | mixup | cutmix (see strong.yaml)
+  alpha: 0.2

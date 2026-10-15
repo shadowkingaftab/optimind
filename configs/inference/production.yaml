@@ -1,1 +1,29 @@
-﻿
+﻿# Inference production config
+# INPUT_REQUIRED: all thresholds require model/clinical approval
+# No secrets, no weights paths committed
+
+model:
+  model_id: eyedx-screening
+  model_version: 1.0.0  # INPUT_REQUIRED from registry
+  device: cpu
+  batch_size: 1
+  timeout_seconds: 30
+  max_image_mb: 10
+
+quality:
+  min_resolution: 224  # INPUT_REQUIRED
+  min_brightness: 0.2  # INPUT_REQUIRED
+  max_blur_score: 0.3  # INPUT_REQUIRED
+
+uncertainty:
+  enabled: true
+  method: max_prob
+  threshold: 0.6  # INPUT_REQUIRED: approval needed
+
+abstention:
+  enabled: true
+  threshold: 0.5  # INPUT_REQUIRED
+
+explanation:
+  enabled: false
+  method: gradcam  # requires approval

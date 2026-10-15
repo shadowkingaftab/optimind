@@ -1,1 +1,16 @@
-﻿
+﻿{
+  "request_id": "00000000-0000-0000-0000-000000000000",
+  "status": "low_quality",
+  "model_id": "eyedx-screening",
+  "model_version": "1.0.0",
+  "created_at": "2026-10-14T00:00:00Z",
+  "predictions": [],
+  "quality": {
+    "passed": false,
+    "issues": ["low_resolution", "blur"]
+  },
+  "limitations": "This is a screening tool only and does not provide a medical diagnosis. Image quality is insufficient for screening; please retry with a clearer image.",
+  "metadata": {
+    "api_version": "v1"
+  }
+}

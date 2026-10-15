@@ -1,1 +1,92 @@
-﻿
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eyedx.ai/schemas/prediction-response.schema.json",
+  "title": "PredictionResponse",
+  "description": "Prediction response with uncertainty, abstention, explanation states. Screening only; not a diagnosis.",
+  "type": "object",
+  "required": [
+    "request_id",
+    "status",
+    "model_id",
+    "model_version",
+    "processing_time_ms"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Traceable request ID"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "low_quality",
+        "uncertain",
+        "abstained",
+        "failed"
+      ],
+      "description": "Prediction processing status"
+    },
+    "model_id": {
+      "type": "string",
+      "description": "Model identifier used"
+    },
+    "model_version": {
+      "type": "string",
+      "description": "Model version used"
+    },
+    "processing_time_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Processing time in milliseconds"
+    },
+    "predictions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["label", "score"],
+        "additionalProperties": false,
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      },
+      "description": "Class probabilities/scores if available; absent for low_quality/failed/abstained states unless explicitly specified"
+    },
+    "uncertainty": {
+      "type": "object",
+      "description": "Uncertainty estimates when supported",
+      "additionalProperties": true
+    },
+    "explanation": {
+      "type": "object",
+      "description": "Explanation metadata/availability when supported",
+      "additionalProperties": true
+    },
+    "quality_checks": {
+      "type": "object",
+      "description": "Image quality assessment results",
+      "additionalProperties": true
+    },
+    "abstention_reason": {
+      "type": "string",
+      "description": "Reason for abstention if status is abstained"
+    },
+    "failure_reason": {
+      "type": "string",
+      "description": "Failure reason if status is failed (non-clinical, safe)"
+    },
+    "limitation_notice": {
+      "type": "string",
+      "description": "Screening limitation notice (mandatory in user-facing contexts)"
+    }
+  }
+}

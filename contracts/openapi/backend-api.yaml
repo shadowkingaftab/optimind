@@ -1,1 +1,104 @@
-﻿
+﻿openapi: 3.1.0
+info:
+  title: EyeDx Backend API
+  description: |
+    EyeDx Backend API for screening workflows. 
+    This is screening software only - never diagnostic.
+  version: 1.0.0
+  license:
+    name: EyeDx License
+servers:
+  - url: /api/v1
+tags:
+  - name: Auth
+  - name: Predictions
+  - name: Health
+
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check
+      responses:
+        '200':
+          description: Service healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, timestamp]
+                additionalProperties: false
+                properties:
+                  status:
+                    type: string
+                    enum: [ok]
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /predictions:
+    post:
+      tags: [Predictions]
+      summary: Submit image for screening prediction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../json-schemas/prediction-request.schema.json'
+      responses:
+        '200':
+          description: Prediction processed
+          content:
+            application/json:
+              schema:
+                $ref: '../json-schemas/prediction-response.schema.json'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '../json-schemas/error-response.schema.json'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '../json-schemas/error-response.schema.json'
+        '403':
+          description: Forbidden (consent/auth)
+          content:
+            application/json:
+              schema:
+                $ref: '../json-schemas/error-response.schema.json'
+        '422':
+          description: Unprocessable (quality/validation)
+          content:
+            application/json:
+              schema:
+                $ref: '../json-schemas/error-response.schema.json'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '../json-schemas/error-response.schema.json'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ErrorResponse:
+      $ref: '../json-schemas/error-response.schema.json'
+    PredictionRequest:
+      $ref: '../json-schemas/prediction-request.schema.json'
+    PredictionResponse:
+      $ref: '../json-schemas/prediction-response.schema.json'
+    ModelMetadata:
+      $ref: '../json-schemas/model-metadata.schema.json'
+
+security:
+  - bearerAuth: []
