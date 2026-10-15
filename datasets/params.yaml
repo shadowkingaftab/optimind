@@ -1,1 +1,35 @@
-﻿
+﻿# DVC parameters for the dataset pipeline.
+#
+# Values mirror ml/configs/datasets/fundus_dataset.yaml. Real image data is
+# never committed; only these parameters and generated metadata are tracked.
+# INPUT_REQUIRED marks values that must be supplied before the pipeline runs.
+
+seed: 42
+
+split:
+  strategy: patient        # patient | site
+  ratios:
+    train: 0.7
+    validation: 0.15
+    test: 0.15
+  holdout_sites: []        # required when strategy == site
+  stratify_on: INPUT_REQUIRED   # canonical primary label code
+
+quality:
+  min_width: 256
+  min_height: 256
+  min_brightness: 0.2
+  max_blur_score: 0.3
+
+dedup:
+  near_duplicate_max_distance: 2
+  iqr_factor: 1.5
+
+statistics:
+  sample_limit: INPUT_REQUIRED
+  min_cell_size: 5
+
+pseudonymization:
+  # Inject the real salt via the EYEDX_PSEUDONYMIZATION_SALT environment
+  # variable; never commit a salt.
+  salt_env: EYEDX_PSEUDONYMIZATION_SALT

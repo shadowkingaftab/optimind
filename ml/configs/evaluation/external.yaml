@@ -1,1 +1,45 @@
-﻿
+﻿# External evaluation config.
+#
+# Evaluates a checkpoint on an external cohort. External data is never used for
+# training or threshold selection. The external cohort and its labels are
+# INPUT_REQUIRED.
+
+schema_version: "1.0.0"
+name: external
+
+model:
+  config: ml/configs/models/baseline.yaml
+  checkpoint: INPUT_REQUIRED
+
+data:
+  dataset_config: ml/configs/datasets/external_validation.yaml
+  split: external-test
+  manifest: datasets/splits/external-test.csv
+  image_root: datasets/external
+  batch_size: 32
+  num_workers: 4
+
+labels:
+  label_map: datasets/annotations/label-map.json
+  harmonisation: INPUT_REQUIRED          # external -> canonical code mapping
+  require_approved_label_map: true
+
+metrics:
+  - auroc
+  - average_precision
+  - sensitivity
+  - specificity
+  - f1
+  - brier
+  - ece
+
+thresholds: {}                           # INPUT_REQUIRED: frozen from internal validation; never tuned on external
+
+bootstrap:
+  enabled: true
+  n_resamples: 1000
+  confidence_level: 0.95
+  seed: 42
+
+output:
+  report: ml/outputs/reports/external-evaluation.json

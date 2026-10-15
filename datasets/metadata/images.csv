@@ -1,1 +1,1 @@
-﻿
+﻿record_id,image_path,patient_key,site_id,device_id,eye_side,image_format,checksum_sha256,labels,split

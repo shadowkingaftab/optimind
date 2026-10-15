@@ -1,1 +1,48 @@
-﻿
+﻿# Internal evaluation config.
+#
+# Evaluates a checkpoint on the held-out internal test split. Thresholds are not
+# set here; they come from approved calibration/clinical decisions. Reports are
+# generated as artifacts, never as invented numbers.
+
+schema_version: "1.0.0"
+name: internal
+
+model:
+  config: ml/configs/models/baseline.yaml
+  checkpoint: INPUT_REQUIRED             # path to an approved checkpoint
+
+data:
+  dataset_config: ml/configs/datasets/fundus_dataset.yaml
+  split: test
+  splits_dir: datasets/splits
+  manifest: datasets/interim/manifest.csv
+  image_root: datasets/raw
+  batch_size: 32
+  num_workers: 4
+
+labels:
+  label_map: datasets/annotations/label-map.json
+  require_approved_label_map: true
+
+metrics:
+  - auroc
+  - average_precision
+  - sensitivity
+  - specificity
+  - f1
+  - accuracy
+  - brier
+  - ece
+
+thresholds: {}                           # INPUT_REQUIRED: per-label operating points
+operating_point: youden                  # youden | fixed | target_sensitivity | target_specificity (used to report, not to invent thresholds)
+
+bootstrap:
+  enabled: true
+  n_resamples: 1000
+  confidence_level: 0.95
+  seed: 42
+
+output:
+  report: ml/outputs/reports/internal-evaluation.json
+  confusion_matrices: ml/outputs/plots

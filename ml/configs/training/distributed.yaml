@@ -1,1 +1,70 @@
-﻿
+﻿# Distributed training config.
+#
+# Describes a multi-process (DDP) run. Cluster resources, node count and node
+# addresses are INPUT_REQUIRED and are supplied by operations; nothing here
+# assumes specific hardware.
+
+schema_version: "1.0.0"
+name: distributed
+
+model:
+  config: ml/configs/models/multilabel.yaml
+
+data:
+  dataset_config: ml/configs/datasets/fundus_dataset.yaml
+  manifest: datasets/interim/manifest.csv
+  splits_dir: datasets/splits
+  train_split: train
+  validation_split: validation
+  image_root: datasets/raw
+  augmentation: ml/configs/augmentation/light.yaml
+  num_workers: 8
+  pin_memory: true
+
+optimizer:
+  name: adamw
+  lr: 0.0002
+  weight_decay: 0.02
+
+scheduler:
+  name: cosine
+  warmup_epochs: 2
+  min_lr: 0.0000001
+
+training:
+  epochs: 60
+  batch_size: 16                         # per-process batch size
+  grad_accum_steps: 1
+  grad_clip_norm: 1.0
+  mixed_precision: true
+
+  early_stopping:
+    enabled: true
+    monitor: val_loss
+    patience: 8
+    mode: min
+
+checkpointing:
+  output_dir: ml/checkpoints
+  save_best: true
+  save_last: true
+  monitor: val_loss
+  mode: min
+
+reproducibility:
+  seed: 42
+  deterministic: true
+  benchmark: false
+
+experiment:
+  name: distributed
+  output_dir: ml/experiments
+  log_every_n_steps: 100
+
+distributed:
+  enabled: true
+  backend: nccl                          # gloo for CPU-only
+  world_size: INPUT_REQUIRED
+  master_addr: INPUT_REQUIRED            # injected by the launcher
+  master_port: INPUT_REQUIRED
+  local_rank_env: LOCAL_RANK             # set by the launcher

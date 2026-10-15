@@ -1,1 +1,93 @@
-﻿
+﻿# DVC pipeline definition for dataset preparation.
+#
+# Dependencies under datasets/raw and datasets/external are not tracked by Git;
+# they are populated under licence. Run stages only when licensed data is
+# present. The stages never download data.
+
+stages:
+  ingest:
+    desc: "Normalise the raw manifest and record provenance."
+    cmd: >-
+      python ml/scripts/ingest_dataset.py
+      --config ml/configs/datasets/fundus_dataset.yaml
+      --manifest datasets/metadata/images.csv
+      --output datasets/interim/manifest.csv
+    deps:
+      - datasets/metadata/images.csv
+      - ml/configs/datasets/fundus_dataset.yaml
+    params:
+      - params.yaml:
+    outs:
+      - datasets/interim/manifest.csv
+
+  validate:
+    desc: "Validate the normalised manifest against the contract."
+    cmd: >-
+      python ml/scripts/validate_dataset.py
+      --config ml/configs/datasets/fundus_dataset.yaml
+      --manifest datasets/interim/manifest.csv
+    deps:
+      - datasets/interim/manifest.csv
+      - datasets/annotations/label-map.json
+      - ml/configs/datasets/fundus_dataset.yaml
+    metrics:
+      - datasets/interim/manifest.validation.json:
+          cache: false
+
+  clean:
+    desc: "Audit duplicates/corruption and emit an exclude list."
+    cmd: >-
+      python ml/scripts/clean_dataset.py
+      --config ml/configs/datasets/fundus_dataset.yaml
+      --manifest datasets/interim/manifest.csv
+      --images
+    deps:
+      - datasets/interim/manifest.csv
+      - datasets/raw
+      - ml/configs/datasets/fundus_dataset.yaml
+    metrics:
+      - datasets/interim/manifest.cleaning.json:
+          cache: false
+    outs:
+      - datasets/interim/manifest.exclude.csv
+
+  split:
+    desc: "Generate patient-level, leakage-safe splits."
+    cmd: >-
+      python ml/scripts/generate_splits.py
+      --config ml/configs/datasets/fundus_dataset.yaml
+      --manifest datasets/interim/manifest.csv
+      --output-dir datasets/splits
+    deps:
+      - datasets/interim/manifest.csv
+      - datasets/interim/manifest.exclude.csv
+      - datasets/annotations/label-map.json
+      - ml/configs/datasets/fundus_dataset.yaml
+    params:
+      - params.yaml:
+          - seed
+          - split
+    outs:
+      - datasets/splits/train.csv
+      - datasets/splits/validation.csv
+      - datasets/splits/test.csv
+      - datasets/splits/split-manifest.json
+
+  statistics:
+    desc: "Compute class, image and demographic statistics."
+    cmd: >-
+      python ml/scripts/calculate_statistics.py
+      --config ml/configs/datasets/fundus_dataset.yaml
+      --manifest datasets/interim/manifest.csv
+      --images
+      --report datasets/interim/dataset.statistics.json
+    deps:
+      - datasets/interim/manifest.csv
+      - datasets/raw
+      - ml/configs/datasets/fundus_dataset.yaml
+    params:
+      - params.yaml:
+          - statistics
+    metrics:
+      - datasets/interim/dataset.statistics.json:
+          cache: false

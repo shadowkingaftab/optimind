@@ -1,1 +1,46 @@
-﻿
+﻿# Subgroup evaluation config.
+#
+# Reports metrics broken down by subgroup (site, device, eye side, and coarse
+# demographic buckets). Subgroup definitions come from the metadata tables; small
+# cells are suppressed. Only non-identifying columns may be used.
+
+schema_version: "1.0.0"
+name: subgroup
+
+model:
+  config: ml/configs/models/baseline.yaml
+  checkpoint: INPUT_REQUIRED
+
+data:
+  manifest: datasets/interim/manifest.csv
+  splits_dir: datasets/splits
+  split: test
+  image_root: datasets/raw
+  metadata_dir: datasets/metadata
+  batch_size: 32
+  num_workers: 4
+
+labels:
+  label_map: datasets/annotations/label-map.json
+  require_approved_label_map: true
+
+subgroups:
+  manifest_columns: [site_id, device_id, eye_side]
+  metadata_columns:
+    patients: [age_bucket, sex]
+  min_cell_size: 5                       # suppress subgroups smaller than this
+
+metrics:
+  - auroc
+  - sensitivity
+  - specificity
+  - f1
+
+bootstrap:
+  enabled: true
+  n_resamples: 1000
+  confidence_level: 0.95
+  seed: 42
+
+output:
+  report: ml/outputs/reports/subgroup-evaluation.json

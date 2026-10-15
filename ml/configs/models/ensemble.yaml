@@ -1,1 +1,38 @@
-﻿
+﻿# Ensemble model config.
+#
+# Combines independently trained member configs at inference time. Members must
+# resolve to concrete checkpoints; member weights/checkpoints are INPUT_REQUIRED
+# and are never committed.
+
+schema_version: "1.0.0"
+name: ensemble
+architecture: ensemble
+description: >-
+  Ensemble of trained screening members combined by soft voting (default),
+  weighted voting or stacking. Does not train a new backbone.
+
+labels: []                             # INPUT_REQUIRED: canonical codes (must match all members)
+num_labels: null                       # INPUT_REQUIRED
+label_map: datasets/annotations/label-map.json
+require_approved_label_map: true
+
+ensemble:
+  method: weighted_voting              # soft_voting | weighted_voting | stacking
+  members: []                          # INPUT_REQUIRED: [{name, config, checkpoint, weight}]
+  stacking:
+    meta_learner: logistic             # used only when method == stacking
+    cv_folds: INPUT_REQUIRED
+  weights: []                          # INPUT_REQUIRED when method == weighted_voting
+  normalize_weights: true
+
+preprocessing:
+  # All members must share this preprocessing or declare their own.
+  mean: INPUT_REQUIRED
+  std: INPUT_REQUIRED
+
+backbone: null
+pretrained: false
+in_channels: 3
+input_size: [512, 512]
+segmentation: null
+multitask: null

@@ -1,1 +1,7 @@
-﻿
+﻿# DVC lock file.
+#
+# Intentionally empty: no stage has been executed because licensed data is not
+# present in this repository. Populate by running `dvc repro` once the required
+# datasets and inputs are supplied. Do not hand-edit hashes here.
+schema: '2.0'
+stages: {}

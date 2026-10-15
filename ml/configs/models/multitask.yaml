@@ -1,1 +1,55 @@
-﻿
+﻿# Multi-task model config.
+#
+# One shared backbone with independent heads (disease screening, image quality,
+# optional severity). Heads are defined here; the label vocabulary for the
+# disease head must be approved.
+
+schema_version: "1.0.0"
+name: multitask
+architecture: multitask
+description: >-
+  Shared-backbone multi-task model with a disease screening head, an image
+  quality head and an optional severity head. Screening only.
+
+backbone: convnext_tiny
+pretrained: false                      # INPUT_REQUIRED: enable with licensed weights
+pretrained_weights: null
+in_channels: 3
+input_size: [512, 512]
+
+labels: []                             # INPUT_REQUIRED: canonical disease codes
+num_labels: null                       # INPUT_REQUIRED
+label_map: datasets/annotations/label-map.json
+require_approved_label_map: true
+
+multitask:
+  heads:
+    disease:
+      type: multilabel
+      labels: []                       # INPUT_REQUIRED: canonical codes
+      hidden_dim: 512
+      dropout: 0.3
+    quality:
+      type: multiclass
+      classes: [good, usable, unusable]  # structural quality, not clinical
+      hidden_dim: 256
+      dropout: 0.2
+    severity:
+      enabled: false                   # INPUT_REQUIRED: enable only if severity is approved
+      type: ordinal
+      levels: []                       # INPUT_REQUIRED
+
+loss:
+  name: multitask_loss
+  weights:
+    disease: 1.0
+    quality: 0.2
+    severity: 0.0
+
+preprocessing:
+  mean: INPUT_REQUIRED
+  std: INPUT_REQUIRED
+  normalize: instance
+
+segmentation: null
+ensemble: null

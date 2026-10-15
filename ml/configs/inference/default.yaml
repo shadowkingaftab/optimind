@@ -1,1 +1,53 @@
-﻿
+﻿# ML inference config (default).
+#
+# Describes how the ML package loads a checkpoint and turns logits into a
+# screening response compatible with the prediction-response contract. Thresholds
+# are INPUT_REQUIRED and must be approved before use. This mirrors
+# configs/inference/development.yaml used by the backend.
+
+schema_version: "1.0.0"
+name: default
+
+model:
+  model_id: eyedx-screening
+  model_version: INPUT_REQUIRED          # set from the approved checkpoint metadata
+  config: ml/configs/models/baseline.yaml
+  checkpoint: null                       # INPUT_REQUIRED: approved checkpoint path
+  device: cpu                            # cpu | cuda | auto
+  batch_size: 1
+
+preprocessing:
+  pipeline: ml/configs/datasets/fundus_dataset.yaml   # steps read from `preprocessing`
+  input_size: [512, 512]
+  mean: INPUT_REQUIRED
+  std: INPUT_REQUIRED
+
+quality:
+  min_resolution: 256                    # INPUT_REQUIRED per model
+  min_brightness: 0.2
+  max_blur_score: 0.3
+
+postprocessing:
+  # Operating thresholds per label. INPUT_REQUIRED: supplied by calibration and
+  # clinical approval; never invented here.
+  thresholds: {}
+  positive_label: INPUT_REQUIRED
+
+uncertainty:
+  enabled: true
+  method: max_prob                       # max_prob | entropy | mc_dropout
+  threshold: 0.6                         # INPUT_REQUIRED
+  mc_dropout_samples: 20                 # used when method == mc_dropout
+
+abstention:
+  enabled: true
+  threshold: 0.5                         # INPUT_REQUIRED
+  abstain_when_low_quality: true
+
+explanation:
+  enabled: false                         # requires approved method + compute budget
+  method: gradcam                        # gradcam | integrated_gradients | occlusion
+
+calibration:
+  temperature: null                      # INPUT_REQUIRED: from calibration artifact
+  method: temperature                    # temperature | isotonic | none

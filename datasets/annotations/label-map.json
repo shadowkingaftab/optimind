@@ -1,1 +1,7 @@
-﻿
+﻿{
+  "schema_version": "1.0.0",
+  "status": "INPUT_REQUIRED",
+  "labels": [],
+  "ignore_values": [],
+  "notes": "Template only. Canonical label codes must be authored and approved by the clinical owner. Add one entry per code with fields: code, display_name, source_values (raw values that map to this code), is_normal, description. Keep status as INPUT_REQUIRED until approved. Eyedx ML will refuse to map labels while status is not 'approved' or while labels is empty. Do not invent disease labels here."
+}

@@ -1,1 +1,69 @@
-﻿
+﻿# Baseline training config.
+#
+# Consumed by eyedx_ml.training.trainer.Trainer and ml/scripts/train.py. Do not
+# tune on the test split; the validation split selects checkpoints and early
+# stopping. Absolute performance numbers are never assumed here.
+
+schema_version: "1.0.0"
+name: baseline
+
+model:
+  config: ml/configs/models/baseline.yaml
+
+data:
+  dataset_config: ml/configs/datasets/fundus_dataset.yaml
+  manifest: datasets/interim/manifest.csv
+  splits_dir: datasets/splits
+  train_split: train
+  validation_split: validation
+  image_root: datasets/raw
+  augmentation: ml/configs/augmentation/light.yaml
+  num_workers: 4
+  pin_memory: true
+
+optimizer:
+  name: adamw                            # sgd | adam | adamw
+  lr: 0.0003
+  weight_decay: 0.01
+  betas: [0.9, 0.999]
+  momentum: 0.9                          # sgd only
+
+scheduler:
+  name: cosine                           # none | step | cosine | onecycle
+  warmup_epochs: 1
+  min_lr: 0.000001
+
+training:
+  epochs: 30
+  batch_size: 16
+  grad_accum_steps: 1
+  grad_clip_norm: 1.0
+  mixed_precision: false                 # INPUT_REQUIRED: enable only with a compatible GPU
+  early_stopping:
+    enabled: true
+    monitor: val_loss
+    patience: 5
+    min_delta: 0.0
+    mode: min
+
+checkpointing:
+  output_dir: ml/checkpoints
+  save_best: true
+  save_last: true
+  monitor: val_loss
+  mode: min
+
+reproducibility:
+  seed: 42
+  deterministic: true
+  benchmark: false
+
+experiment:
+  name: baseline
+  output_dir: ml/experiments
+  log_every_n_steps: 50
+
+distributed:
+  enabled: false                         # INPUT_REQUIRED: enable for multi-GPU
+  backend: nccl
+  world_size: 1

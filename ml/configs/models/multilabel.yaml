@@ -1,1 +1,40 @@
-﻿
+﻿# Multi-label screening model config.
+#
+# Use when a single image can carry more than one approved screening label. The
+# label vocabulary must be approved before training; keep `labels` empty until
+# then.
+
+schema_version: "1.0.0"
+name: multilabel
+architecture: multilabel_classifier
+description: >-
+  Multi-label classifier producing one independent probability per approved
+  screening label. Screening only.
+
+backbone: efficientnet_b0              # see eyedx_ml.models.backbones.BACKBONES
+pretrained: false                      # INPUT_REQUIRED: enable with licensed weights
+pretrained_weights: null
+in_channels: 3
+
+input_size: [512, 512]
+dropout: 0.3
+hidden_dim: 512
+
+labels: []                             # INPUT_REQUIRED: canonical codes
+num_labels: null                       # INPUT_REQUIRED
+label_map: datasets/annotations/label-map.json
+require_approved_label_map: true
+
+preprocessing:
+  mean: INPUT_REQUIRED
+  std: INPUT_REQUIRED
+  normalize: instance
+
+loss:
+  name: weighted_bce                   # see eyedx_ml.models.losses
+  pos_weight: INPUT_REQUIRED           # derived from training-split prevalence
+  focal_gamma: 2.0
+
+segmentation: null
+multitask: null
+ensemble: null

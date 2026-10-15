@@ -1,1 +1,56 @@
-﻿
+﻿# ML inference config (production).
+#
+# Production settings for the ML package's inference path. The model service
+# (Phase 6) consumes equivalent settings; keep keys aligned. All thresholds and
+# the approved checkpoint are INPUT_REQUIRED.
+
+schema_version: "1.0.0"
+name: production
+
+model:
+  model_id: eyedx-screening
+  model_version: INPUT_REQUIRED
+  config: ml/configs/models/multilabel.yaml
+  checkpoint: null                       # INPUT_REQUIRED: approved, registry-managed artifact
+  device: auto                           # cpu | cuda | auto
+  batch_size: 8
+  compile: false                         # INPUT_REQUIRED: enable only after validation
+  timeout_seconds: 30
+
+preprocessing:
+  pipeline: ml/configs/datasets/fundus_dataset.yaml
+  input_size: [512, 512]
+  mean: INPUT_REQUIRED
+  std: INPUT_REQUIRED
+
+quality:
+  min_resolution: 256                    # INPUT_REQUIRED per model
+  min_brightness: 0.2
+  max_blur_score: 0.3
+
+postprocessing:
+  thresholds: {}                         # INPUT_REQUIRED: approved operating points
+  positive_label: INPUT_REQUIRED
+
+uncertainty:
+  enabled: true
+  method: max_prob
+  threshold: 0.6                         # INPUT_REQUIRED
+
+abstention:
+  enabled: true
+  threshold: 0.5                         # INPUT_REQUIRED
+  abstain_when_low_quality: true
+
+explanation:
+  enabled: false
+  method: gradcam
+
+calibration:
+  temperature: null                      # INPUT_REQUIRED
+  method: temperature
+
+monitoring:
+  # Privacy-safe runtime metrics only; no patient data.
+  log_latency: true
+  log_model_version: true

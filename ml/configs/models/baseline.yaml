@@ -1,1 +1,36 @@
-﻿
+﻿# Baseline screening model config.
+#
+# Consumed by eyedx_ml.models.model_factory.build_model and by the training
+# scripts. Labels come from the approved label map; `labels` and `num_labels`
+# stay empty until that map is approved (INPUT_REQUIRED). Pretrained weights are
+# not committed and are off by default.
+
+schema_version: "1.0.0"
+name: baseline
+architecture: multilabel_classifier   # binary_classifier | multiclass_classifier | multilabel_classifier | multitask | segmentation
+description: >-
+  Backbone + linear multi-label head for retinal screening. Screening only; the
+  model is never treated as diagnostic.
+
+backbone: resnet50                     # see eyedx_ml.models.backbones.BACKBONES
+pretrained: false                      # INPUT_REQUIRED: set true and configure weights to use ImageNet init
+pretrained_weights: null               # INPUT_REQUIRED: path or hub identifier, supplied under licence
+in_channels: 3
+
+input_size: [512, 512]                 # width, height
+dropout: 0.2
+hidden_dim: 512
+
+labels: []                             # INPUT_REQUIRED: canonical codes from the approved label map
+num_labels: null                       # INPUT_REQUIRED: must equal len(labels)
+label_map: datasets/annotations/label-map.json
+require_approved_label_map: true
+
+preprocessing:
+  mean: INPUT_REQUIRED                 # computed from the training split
+  std: INPUT_REQUIRED
+  normalize: instance                  # instance | dataset
+
+segmentation: null
+multitask: null
+ensemble: null
